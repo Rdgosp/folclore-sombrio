@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d0706">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Folclore">
+<meta name="description" content="Jogo de luta 3D inspirado no folclore brasileiro.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-180.png">
+<title>Folclore Sombrio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bone:#e6d9bd; --blood:#a3170f; --ember:#ff7a1f; --ink:#0d0706;
+    --st:env(safe-area-inset-top,0px); --sr:env(safe-area-inset-right,0px); --sb:env(safe-area-inset-bottom,0px); --sl:env(safe-area-inset-left,0px);
+    --u:clamp(46px,14vh,68px); }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { margin:0; height:100%; background:var(--ink); overflow:hidden; font-family:'Cinzel', Georgia, serif; color:var(--bone);
+    user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; touch-action:none; overscroll-behavior:none; }
+  body { position:fixed; inset:0; }
+  canvas { position:fixed; inset:0; width:100%; height:100%; display:block; }
+  #vig { position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.6) 100%); }
+  #flash { position:fixed; inset:0; pointer-events:none; background:#fff; opacity:0; transition:opacity .35s; }
+  #bars { position:fixed; inset:0; pointer-events:none; }
+  #bars::before, #bars::after { content:''; position:absolute; left:0; right:0; height:0; background:#000; transition:height .3s; }
+  #bars::before { top:0; } #bars::after { bottom:0; }
+  #bars.on::before, #bars.on::after { height:10vh; }
+
+  /* ---------- HUD ---------- */
+  #hud { position:fixed; inset:0; pointer-events:none; display:none; transition:opacity .3s; }
+  #hud.cine { opacity:0; }
+  .top { position:absolute; top:calc(14px + var(--st)); left:calc(3vw + var(--sl)); right:calc(3vw + var(--sr)); display:flex; align-items:flex-start; gap:18px; }
+  .side { flex:1; min-width:0; }
+  .side.r { text-align:right; }
+  .name { font-weight:900; letter-spacing:.14em; font-size:clamp(12px,1.5vw,21px); text-shadow:0 2px 6px #000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hp { position:relative; height:22px; margin-top:5px; background:rgba(10,5,4,.75); border:2px solid #3a2a20; outline:1px solid #000; transform:skewX(-14deg); overflow:hidden; }
+  .side.r .hp { transform:skewX(14deg); }
+  .hp i { position:absolute; top:0; bottom:0; left:0; width:100%; }
+  .side.l .hp i { left:auto; right:0; }
+  .hp .ghost { background:#e9dcc0; }
+  .hp .fill { background:linear-gradient(#d8301c,#7d0f0a); box-shadow:inset 0 2px 0 rgba(255,255,255,.25); }
+  .hp .fill.burn { background:linear-gradient(#ffa42e,#c2410c); }
+  .row { display:flex; align-items:center; gap:10px; margin-top:6px; }
+  .side.r .row { flex-direction:row-reverse; }
+  .pips { display:flex; gap:6px; flex:none; }
+  .pips b { width:12px; height:12px; transform:rotate(45deg); border:2px solid #6b5640; background:rgba(0,0,0,.5); }
+  .pips b.on { background:var(--ember); border-color:#ffd9a0; box-shadow:0 0 10px var(--ember); }
+  .en { flex:1; max-width:62%; height:9px; background:rgba(10,5,4,.75); border:1px solid #4a382a; overflow:hidden; }
+  .en i { display:block; height:100%; width:0; background:linear-gradient(90deg,#5b2a8a,#c06cff); }
+  .side.r .en i { margin-left:auto; }
+  .en.full i { background:linear-gradient(90deg,#ff9a2e,#fff1b8); animation:pulse .5s infinite alternate; }
+  @keyframes pulse { to { filter:brightness(1.6); } }
+  .mid { width:74px; flex:none; text-align:center; }
+  #timer { font-size:38px; font-weight:900; line-height:1; text-shadow:0 2px 8px #000; padding-top:8px; }
+  #pauseBtn { pointer-events:auto; margin-top:6px; width:44px; height:34px; padding:0; background:rgba(10,5,4,.6); border:1px solid #5a4636; color:var(--bone); font-size:13px; letter-spacing:2px; cursor:pointer; }
+  .cds { position:absolute; left:calc(3vw + var(--sl)); bottom:calc(18px + var(--sb)); display:flex; gap:6px; }
+  .cds span { font-size:10px; letter-spacing:.08em; padding:3px 7px; border:1px solid #5a4636; background:rgba(10,5,4,.7); }
+  .cds span.off { opacity:.35; }
+  body.touch .cds { display:none; }
+  #combo { position:absolute; left:calc(4vw + var(--sl)); top:26vh; font-size:clamp(20px,4vw,34px); font-weight:900; color:#ffd27a; text-shadow:0 3px 0 #5a1208, 0 0 18px rgba(255,120,30,.7); opacity:0; transition:opacity .2s; }
+  #msg { position:fixed; left:0; right:0; top:32vh; text-align:center; pointer-events:none; font-weight:900; font-size:clamp(40px,9vw,130px); letter-spacing:.08em; color:var(--bone);
+    text-shadow:0 4px 0 #4a0c08, 0 0 40px rgba(255,90,20,.65); opacity:0; transform:scale(1.3); transition:opacity .18s, transform .25s; }
+  #msg.on { opacity:1; transform:scale(1); }
+  #msg small { display:block; font-size:.2em; letter-spacing:.4em; color:#ffb060; }
+
+  /* ---------- controles de toque ---------- */
+  #touch { position:fixed; inset:0; display:none; pointer-events:none; }
+  body.touch.playing #touch { display:block; }
+  #stickZone { position:absolute; left:0; top:24%; bottom:0; width:46%; pointer-events:auto; touch-action:none; }
+  #stickBase { position:fixed; left:calc(var(--sl) + var(--u) * 1.75); top:calc(100% - var(--sb) - var(--u) * 1.55); width:calc(var(--u) * 2.1); height:calc(var(--u) * 2.1); margin:calc(var(--u) * -1.05) 0 0 calc(var(--u) * -1.05);
+    border-radius:50%; border:2px solid rgba(230,217,189,.28); background:radial-gradient(circle, rgba(13,7,6,.15), rgba(13,7,6,.5)); opacity:.6; pointer-events:none; }
+  #stickBase.on { opacity:1; border-color:rgba(255,160,80,.6); }
+  #stickKnob { position:absolute; left:50%; top:50%; width:44%; height:44%; margin:-22% 0 0 -22%; border-radius:50%; background:radial-gradient(circle at 35% 30%, #f1e4c8, #8d7a5c); box-shadow:0 3px 10px rgba(0,0,0,.6); }
+  #pad { position:absolute; right:calc(var(--sr) + 12px); bottom:calc(var(--sb) + 10px); width:calc(var(--u) * 4.6); height:calc(var(--u) * 2.95); }
+  .tb { position:absolute; width:var(--u); height:var(--u); padding:0; border-radius:50%; pointer-events:auto; touch-action:none; cursor:pointer;
+    font-family:inherit; font-weight:700; font-size:calc(var(--u) * .17); letter-spacing:.04em; color:var(--bone);
+    background:radial-gradient(circle at 35% 28%, rgba(120,40,24,.85), rgba(30,12,9,.82)); border:2px solid rgba(230,217,189,.45); box-shadow:0 3px 10px rgba(0,0,0,.55); transition:transform .06s, filter .06s; }
+  .tb.down { transform:scale(.9); filter:brightness(1.7); }
+  .tb.off { opacity:.35; }
+  .tb.j { right:calc(var(--u) * 1.15); bottom:0; width:calc(var(--u) * 1.2); height:calc(var(--u) * 1.2); font-size:calc(var(--u) * .2); }
+  .tb.k { right:0; bottom:calc(var(--u) * .75); }
+  .tb.l { right:calc(var(--u) * 2.45); bottom:calc(var(--u) * .1); }
+  .tb.i { right:calc(var(--u) * 1.2); bottom:calc(var(--u) * 1.35); }
+  .tb.o { right:0; bottom:calc(var(--u) * 1.9); }
+  .tb.bl { right:calc(var(--u) * 3.58); bottom:calc(var(--u) * .1); background:radial-gradient(circle at 35% 28%, rgba(70,84,110,.85), rgba(14,18,28,.82)); }
+  .tb.sp { right:calc(var(--u) * 2.35); bottom:calc(var(--u) * 1.25); background:radial-gradient(circle at 35% 28%, rgba(80,40,120,.8), rgba(20,10,30,.82)); opacity:.45; }
+  .tb.sp.ready { opacity:1; border-color:#ffe2a0; background:radial-gradient(circle at 35% 28%, #ffb54a, #a8380c); box-shadow:0 0 22px rgba(255,150,40,.9); animation:pulse .5s infinite alternate; }
+
+  /* ---------- telas ---------- */
+  .screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; background:radial-gradient(ellipse at center, rgba(13,7,6,.55), rgba(13,7,6,.93));
+    padding:calc(18px + var(--st)) calc(20px + var(--sr)) calc(18px + var(--sb)) calc(20px + var(--sl)); text-align:center; overflow-y:auto; touch-action:pan-y; }
+  .screen::before, .screen::after { content:''; flex:1; }
+  h1 { margin:0; font-size:clamp(30px,7vw,92px); font-weight:900; letter-spacing:.12em; color:var(--bone); text-shadow:0 4px 0 #4a0c08, 0 0 46px rgba(255,90,20,.5); }
+  h1 span { color:var(--blood); }
+  .sub { letter-spacing:.5em; font-size:12px; color:#c9a36a; margin:8px 0 30px; }
+  .cards { display:flex; gap:22px; flex-wrap:wrap; justify-content:center; }
+  .card { width:270px; padding:20px 20px 16px; cursor:pointer; background:rgba(20,10,8,.85); border:1px solid #5a3b28; color:var(--bone); font-family:inherit; text-align:left; transition:transform .15s, border-color .15s, box-shadow .15s; }
+  .card:hover, .card:focus { transform:translateY(-5px); border-color:var(--ember); box-shadow:0 0 34px rgba(255,110,30,.35); outline:none; }
+  .card h2 { margin:0 0 2px; font-size:23px; letter-spacing:.1em; }
+  .card em { font-style:normal; font-size:11px; letter-spacing:.14em; color:#c9a36a; }
+  .card dl { margin:14px 0 0; display:grid; grid-template-columns:auto 1fr; gap:5px 10px; font-size:11px; letter-spacing:.08em; align-items:center; font-family:Georgia,serif; }
+  .card dd { margin:0; height:6px; background:#2a1a14; } .card dd i { display:block; height:100%; background:linear-gradient(90deg,#8a1a10,#ff7a1f); }
+  .keys { margin-top:24px; font-family:Georgia,serif; font-size:13px; line-height:1.9; color:#cdbfa3; max-width:780px; }
+  body.touch .keys { display:none; }
+  .hint { display:none; margin-top:18px; font-family:Georgia,serif; font-size:12px; color:#cdbfa3; }
+  body.touch .hint { display:block; }
+  kbd { font-family:inherit; font-size:12px; padding:2px 7px; border:1px solid #6b5640; border-bottom-width:2px; background:#1b100c; color:var(--bone); margin:0 1px; }
+  .btn { margin-top:22px; min-width:230px; padding:13px 34px; font-family:inherit; font-weight:700; letter-spacing:.2em; font-size:15px; color:var(--bone); background:#5a120c; border:1px solid var(--ember); cursor:pointer; }
+  .btn.ghost { margin-top:12px; background:transparent; }
+  .btn:hover, .btn:focus { background:#8a1a10; outline:none; box-shadow:0 0 24px rgba(255,110,30,.35); }
+  .q { margin-top:20px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:center; font-size:11px; letter-spacing:.2em; color:#c9a36a; }
+  .q span { margin-right:6px; }
+  .q button { min-width:64px; padding:9px 12px; font-family:inherit; font-size:11px; letter-spacing:.14em; color:var(--bone); background:rgba(20,10,8,.85); border:1px solid #5a3b28; cursor:pointer; }
+  .q button.sel { background:#5a120c; border-color:var(--ember); }
+  .q button:focus { outline:1px solid var(--bone); }
+  #over, #pause, #rotate { display:none; }
+  #pause, #rotate, #boot { background:rgba(13,7,6,.9); }
+  #boot { background:var(--ink); transition:opacity .5s; z-index:5; }
+  #boot.hide { opacity:0; pointer-events:none; }
+  #boot .sub { animation:pulse 1s infinite alternate; }
+  #rotate { z-index:6; background:var(--ink); }
+  #rotate .ph { width:54px; height:92px; border:3px solid var(--bone); border-radius:9px; margin-bottom:22px; animation:turn 1.8s infinite ease-in-out; }
+  @keyframes turn { 0%,25% { transform:rotate(0); } 65%,100% { transform:rotate(90deg); } }
+  @media (orientation:portrait) { body.touch #rotate { display:flex; } }
+
+  /* ---------- celular deitado ---------- */
+  @media (max-height:520px) {
+    .top { top:calc(7px + var(--st)); gap:10px; }
+    .hp { height:14px; margin-top:3px; border-width:1px; }
+    .row { margin-top:5px; } .pips b { width:9px; height:9px; border-width:1px; } .en { height:7px; }
+    .mid { width:54px; } #timer { font-size:26px; padding-top:4px; } #pauseBtn { width:40px; height:28px; margin-top:3px; }
+    #combo { top:30vh; }
+    .sub { letter-spacing:.3em; font-size:10px; margin:5px 0 14px; }
+    .cards { gap:12px; flex-wrap:nowrap; } .card { width:min(42vw,260px); padding:12px 14px; } .card h2 { font-size:17px; } .card em { font-size:9px; } .card dl { display:none; }
+    .btn { margin-top:14px; padding:10px 26px; font-size:13px; } .btn.ghost { margin-top:8px; }
+    .q { margin-top:12px; } .q button { padding:8px 10px; } .hint { margin-top:10px; font-size:11px; }
+  }
+</style>
+  <script type="module" crossorigin src="./assets/index-DEa1F6oB.js"></script>
+</head>
+<body>
+<div id="vig"></div><div id="bars"></div>
+<div id="hud">
+  <div class="top">
+    <div class="side l"><div class="name" id="n1"></div><div class="hp"><i class="ghost" id="g1"></i><i class="fill" id="h1"></i></div>
+      <div class="row"><div class="pips" id="w1"><b></b><b></b></div><div class="en" id="e1"><i></i></div></div></div>
+    <div class="mid"><div id="timer">60</div><button id="pauseBtn" aria-label="Pausar">II</button></div>
+    <div class="side r"><div class="name" id="n2"></div><div class="hp"><i class="ghost" id="g2"></i><i class="fill" id="h2"></i></div>
+      <div class="row"><div class="pips" id="w2"><b></b><b></b></div><div class="en" id="e2"><i></i></div></div></div>
+  </div>
+  <div id="combo"></div>
+  <div class="cds" id="cds"></div>
+</div>
+<div id="touch">
+  <div id="stickZone"></div>
+  <div id="stickBase"><div id="stickKnob"></div></div>
+  <div id="pad">
+    <button class="tb bl" data-btn="BLOCK">DEFESA</button>
+    <button class="tb l" data-btn="L"></button>
+    <button class="tb sp" data-btn="SP">PODER</button>
+    <button class="tb i" data-btn="I"></button>
+    <button class="tb o" data-btn="O"></button>
+    <button class="tb j" data-btn="J">LEVE</button>
+    <button class="tb k" data-btn="K">PESADO</button>
+  </div>
+</div>
+<div id="msg"></div>
+<div id="flash"></div>
+<div class="screen" id="menu">
+  <h1>FOLCLORE <span>SOMBRIO</span></h1>
+  <div class="sub">PROTÓTIPO DE COMBATE · V0.2 · ESCOLHA SEU LUTADOR</div>
+  <div class="cards">
+    <button class="card" data-k="saci"><h2>SACI</h2><em>VELOCIDADE · EVASÃO · CONTROLE</em>
+      <dl><dt>Força</dt><dd><i style="width:60%"></i></dd><dt>Velocidade</dt><dd><i style="width:100%"></i></dd><dt>Resistência</dt><dd><i style="width:50%"></i></dd><dt>Alcance</dt><dd><i style="width:70%"></i></dd><dt>Mobilidade</dt><dd><i style="width:100%"></i></dd></dl></button>
+    <button class="card" data-k="mula"><h2>MULA SEM CABEÇA</h2><em>FORÇA · RESISTÊNCIA · PRESSÃO</em>
+      <dl><dt>Força</dt><dd><i style="width:90%"></i></dd><dt>Velocidade</dt><dd><i style="width:50%"></i></dd><dt>Resistência</dt><dd><i style="width:90%"></i></dd><dt>Alcance</dt><dd><i style="width:70%"></i></dd><dt>Mobilidade</dt><dd><i style="width:40%"></i></dd></dl></button>
+  </div>
+  <div class="q"><span>GRÁFICOS</span><button data-q="auto">AUTO</button><button data-q="low">BAIXO</button><button data-q="medium">MÉDIO</button><button data-q="high">ALTO</button></div>
+  <div class="keys">
+    <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover em 3D (W/S = profundidade) &nbsp;·&nbsp; <kbd>Shift</kbd> bloquear &nbsp;·&nbsp; <kbd>Esc</kbd> pausar<br>
+    <kbd>J</kbd> ataque leve &nbsp; <kbd>K</kbd> ataque pesado &nbsp; <kbd>L</kbd> golpe médio &nbsp; <kbd>I</kbd> golpe especial &nbsp; <kbd>O</kbd> golpe defensivo<br>
+    <kbd>Espaço</kbd> Poder Folclórico (barra cheia) &nbsp;·&nbsp; combo: <kbd>J</kbd> <kbd>J</kbd> <kbd>K</kbd> &nbsp;·&nbsp; controle físico também funciona
+  </div>
+  <div class="hint">Arraste o lado esquerdo da tela para mover · botões à direita para atacar · combo: LEVE, LEVE, PESADO</div>
+</div>
+<div class="screen" id="over"><h1 id="overT"></h1><div class="sub" id="overS"></div><button class="btn" id="again">REVANCHE</button><button class="btn ghost" id="tomenu">TROCAR LUTADOR</button></div>
+<div class="screen" id="pause"><h1>PAUSA</h1><button class="btn" id="resume">CONTINUAR</button>
+  <div class="q"><span>GRÁFICOS</span><button data-q="auto">AUTO</button><button data-q="low">BAIXO</button><button data-q="medium">MÉDIO</button><button data-q="high">ALTO</button></div>
+  <button class="btn ghost" id="quit">SAIR PARA O MENU</button></div>
+<div class="screen" id="rotate"><div class="ph"></div><div class="sub" style="margin:0">GIRE O APARELHO PARA JOGAR</div></div>
+<div class="screen" id="boot"><h1>FOLCLORE <span>SOMBRIO</span></h1><div class="sub">CARREGANDO</div></div>
+</body>
+</html>
