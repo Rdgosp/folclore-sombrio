@@ -18,7 +18,7 @@
 <style>
   :root { --bone:#e6d9bd; --blood:#a3170f; --ember:#ff7a1f; --ink:#0d0706;
     --st:env(safe-area-inset-top,0px); --sr:env(safe-area-inset-right,0px); --sb:env(safe-area-inset-bottom,0px); --sl:env(safe-area-inset-left,0px);
-    --u:clamp(46px,14vh,68px); }
+    --u:calc(clamp(46px,14vh,68px) * var(--cs,1)); }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { margin:0; height:100%; background:var(--ink); overflow:hidden; font-family:'Cinzel', Georgia, serif; color:var(--bone);
     user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; touch-action:none; overscroll-behavior:none; }
@@ -72,24 +72,44 @@
   #touch { position:fixed; inset:0; display:none; pointer-events:none; }
   body.touch.playing #touch { display:block; }
   #stickZone { position:absolute; left:0; top:24%; bottom:0; width:46%; pointer-events:auto; touch-action:none; }
-  #stickBase { position:fixed; left:calc(var(--sl) + var(--u) * 1.75); top:calc(100% - var(--sb) - var(--u) * 1.55); width:calc(var(--u) * 2.1); height:calc(var(--u) * 2.1); margin:calc(var(--u) * -1.05) 0 0 calc(var(--u) * -1.05);
+  #stickBase { position:fixed; left:calc(var(--sl) + var(--u) * 1.75 + var(--stx,0px)); top:calc(100% - var(--sb) - var(--u) * 1.55 + var(--sty,0px)); width:calc(var(--u) * 2.1); height:calc(var(--u) * 2.1); margin:calc(var(--u) * -1.05) 0 0 calc(var(--u) * -1.05);
     border-radius:50%; border:2px solid rgba(230,217,189,.28); background:radial-gradient(circle, rgba(13,7,6,.15), rgba(13,7,6,.5)); opacity:.6; pointer-events:none; }
   #stickBase.on { opacity:1; border-color:rgba(255,160,80,.6); }
   #stickKnob { position:absolute; left:50%; top:50%; width:44%; height:44%; margin:-22% 0 0 -22%; border-radius:50%; background:radial-gradient(circle at 35% 30%, #f1e4c8, #8d7a5c); box-shadow:0 3px 10px rgba(0,0,0,.6); }
-  #pad { position:absolute; right:calc(var(--sr) + 12px); bottom:calc(var(--sb) + 10px); width:calc(var(--u) * 4.6); height:calc(var(--u) * 2.95); }
-  .tb { position:absolute; width:var(--u); height:var(--u); padding:0; border-radius:50%; pointer-events:auto; touch-action:none; cursor:pointer;
-    font-family:inherit; font-weight:700; font-size:calc(var(--u) * .17); letter-spacing:.04em; color:var(--bone);
-    background:radial-gradient(circle at 35% 28%, rgba(120,40,24,.85), rgba(30,12,9,.82)); border:2px solid rgba(230,217,189,.45); box-shadow:0 3px 10px rgba(0,0,0,.55); transition:transform .06s, filter .06s; }
+  #pad { position:absolute; right:calc(var(--sr) + 12px - var(--padx,0px)); bottom:calc(var(--sb) + 10px - var(--pady,0px)); width:calc(var(--u) * 4.1); height:calc(var(--u) * 3.5); }
+  .tb { --s:var(--u); position:absolute; right:calc(var(--u) * var(--x) - var(--s) / 2); bottom:calc(var(--u) * var(--y) - var(--s) / 2); width:var(--s); height:var(--s); padding:0; border-radius:50%; pointer-events:auto; touch-action:none; cursor:pointer;
+    color:var(--ic,#eadfc6); background:radial-gradient(circle at 35% 28%, #4a3a34, #140c0a 78%); border:2px solid rgba(230,217,189,.55); box-shadow:0 3px 10px rgba(0,0,0,.6), inset 0 0 0 3px rgba(0,0,0,.35); transition:transform .06s, filter .06s; }
+  .tb .ico { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; }
+  .tb svg { width:60%; height:60%; fill:currentColor; filter:drop-shadow(0 2px 2px rgba(0,0,0,.6)); }
+  .tb svg .s { fill:none; stroke:currentColor; stroke-width:4.5; stroke-linecap:round; stroke-linejoin:round; }
+  .tb svg .k { fill:none; stroke:rgba(0,0,0,.55); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+  .tb svg .kf { fill:rgba(0,0,0,.5); }
+  .tb .ring { position:absolute; inset:-5px; border-radius:50%; opacity:0; pointer-events:none; background:conic-gradient(#3fd8ff var(--p,0%), rgba(63,216,255,.14) 0);
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px)); mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px)); }
+  .tb .n { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; font-family:inherit; font-weight:900; font-size:calc(var(--s) * .36); color:#e4f8ff; text-shadow:0 1px 5px #000, 0 0 8px #0a5a78; }
+  /* poderes sobrenaturais: aro e fundo na cor do poder (ataques básicos ficam em ferro e osso) */
+  .tb.pw { background:radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--ic) 42%, #1a0d0a), #120807 80%); border-color:color-mix(in srgb, var(--ic) 80%, #000); box-shadow:0 3px 10px rgba(0,0,0,.6), 0 0 12px color-mix(in srgb, var(--ic) 45%, transparent), inset 0 0 0 3px rgba(0,0,0,.35); }
+  .tb.bl { background:radial-gradient(circle at 35% 28%, #46546e, #0e121c 80%); }
   .tb.down { transform:scale(.9); filter:brightness(1.7); }
-  .tb.off { opacity:.35; }
-  .tb.j { right:calc(var(--u) * 1.15); bottom:0; width:calc(var(--u) * 1.2); height:calc(var(--u) * 1.2); font-size:calc(var(--u) * .2); }
-  .tb.k { right:0; bottom:calc(var(--u) * .75); }
-  .tb.l { right:calc(var(--u) * 2.45); bottom:calc(var(--u) * .1); }
-  .tb.i { right:calc(var(--u) * 1.2); bottom:calc(var(--u) * 1.35); }
-  .tb.o { right:0; bottom:calc(var(--u) * 1.9); }
-  .tb.bl { right:calc(var(--u) * 3.58); bottom:calc(var(--u) * .1); background:radial-gradient(circle at 35% 28%, rgba(70,84,110,.85), rgba(14,18,28,.82)); }
-  .tb.sp { right:calc(var(--u) * 2.35); bottom:calc(var(--u) * 1.25); background:radial-gradient(circle at 35% 28%, rgba(80,40,120,.8), rgba(20,10,30,.82)); opacity:.45; }
-  .tb.sp.ready { opacity:1; border-color:#ffe2a0; background:radial-gradient(circle at 35% 28%, #ffb54a, #a8380c); box-shadow:0 0 22px rgba(255,150,40,.9); animation:pulse .5s infinite alternate; }
+  .tb.cool { background:radial-gradient(circle at 35% 28%, #3a3a3a, #0e0e0e 80%); border-color:rgba(255,255,255,.14); box-shadow:0 3px 10px rgba(0,0,0,.6); }
+  .tb.cool .ico { filter:grayscale(1) brightness(.55); opacity:.6; }
+  .tb.cool .ring { opacity:1; }
+  .tb.nores { background:radial-gradient(circle at 35% 28%, #241a18, #0a0605 80%); border-color:rgba(230,217,189,.16); box-shadow:0 3px 10px rgba(0,0,0,.6); }
+  .tb.nores .ico { filter:brightness(.4) saturate(.45); }
+  .tb.back { animation:back .5s ease-out; }
+  @keyframes back { 0% { transform:scale(1.28); filter:brightness(2.6); box-shadow:0 0 0 0 #fff, 0 0 30px var(--ic,#fff); } 100% { transform:scale(1); filter:brightness(1); } }
+  .tb.j { --s:calc(var(--u) * 1.35); --x:.85; --y:.8; }
+  .tb.k { --x:2.35; --y:.62; }
+  .tb.bl { --x:3.5; --y:.62; }
+  .tb.l { --s:calc(var(--u) * .95); --x:2; --y:1.75; }
+  .tb.i { --s:calc(var(--u) * .95); --x:.95; --y:2.25; }
+  .tb.o { --s:calc(var(--u) * .95); --x:3.1; --y:1.75; }
+  .tb.sp { --s:calc(var(--u) * 1.1); --x:2.1; --y:2.85; }
+  .tb.sp .ring { opacity:1; background:conic-gradient(#ffc45a var(--p,0%), rgba(255,196,90,.14) 0); }
+  .tb.sp.ready { border-color:#ffe2a0; background:radial-gradient(circle at 35% 28%, #ffb54a, #a8380c); color:#fff6dc; box-shadow:0 0 22px rgba(255,150,40,.9); animation:pulse .5s infinite alternate; }
+  .tb.sp.ready .ring { opacity:0; }
+  .tb.sp.ready.back { animation:back .5s ease-out, pulse .5s .5s infinite alternate; }
+  .q.cs { display:none; } body.touch .q.cs { display:flex; margin-top:10px; }
 
   /* ---------- telas ---------- */
   .screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; background:radial-gradient(ellipse at center, rgba(13,7,6,.55), rgba(13,7,6,.93));
@@ -141,7 +161,7 @@
     .q { margin-top:12px; } .q button { padding:8px 10px; } .hint { margin-top:10px; font-size:11px; }
   }
 </style>
-  <script type="module" crossorigin src="./assets/index-DEa1F6oB.js"></script>
+  <script type="module" crossorigin src="./assets/index-Dc63Yv2M.js"></script>
 </head>
 <body>
 <div id="vig"></div><div id="bars"></div>
@@ -160,13 +180,13 @@
   <div id="stickZone"></div>
   <div id="stickBase"><div id="stickKnob"></div></div>
   <div id="pad">
-    <button class="tb bl" data-btn="BLOCK">DEFESA</button>
-    <button class="tb l" data-btn="L"></button>
-    <button class="tb sp" data-btn="SP">PODER</button>
-    <button class="tb i" data-btn="I"></button>
-    <button class="tb o" data-btn="O"></button>
-    <button class="tb j" data-btn="J">LEVE</button>
-    <button class="tb k" data-btn="K">PESADO</button>
+    <button class="tb bl" data-btn="BLOCK" aria-label="Defesa"></button>
+    <button class="tb pw l" data-btn="L" aria-label="Poder 1"></button>
+    <button class="tb pw sp" data-btn="SP" aria-label="Supremo"></button>
+    <button class="tb pw i" data-btn="I" aria-label="Poder 2"></button>
+    <button class="tb pw o" data-btn="O" aria-label="Poder 3"></button>
+    <button class="tb j" data-btn="J" aria-label="Ataque leve"></button>
+    <button class="tb k" data-btn="K" aria-label="Ataque pesado"></button>
   </div>
 </div>
 <div id="msg"></div>
@@ -181,16 +201,18 @@
       <dl><dt>Força</dt><dd><i style="width:90%"></i></dd><dt>Velocidade</dt><dd><i style="width:50%"></i></dd><dt>Resistência</dt><dd><i style="width:90%"></i></dd><dt>Alcance</dt><dd><i style="width:70%"></i></dd><dt>Mobilidade</dt><dd><i style="width:40%"></i></dd></dl></button>
   </div>
   <div class="q"><span>GRÁFICOS</span><button data-q="auto">AUTO</button><button data-q="low">BAIXO</button><button data-q="medium">MÉDIO</button><button data-q="high">ALTO</button></div>
+  <div class="q cs"><span>CONTROLES</span><button data-cs="0.85">P</button><button data-cs="1">M</button><button data-cs="1.15">G</button></div>
   <div class="keys">
     <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover em 3D (W/S = profundidade) &nbsp;·&nbsp; <kbd>Shift</kbd> bloquear &nbsp;·&nbsp; <kbd>Esc</kbd> pausar<br>
     <kbd>J</kbd> ataque leve &nbsp; <kbd>K</kbd> ataque pesado &nbsp; <kbd>L</kbd> golpe médio &nbsp; <kbd>I</kbd> golpe especial &nbsp; <kbd>O</kbd> golpe defensivo<br>
     <kbd>Espaço</kbd> Poder Folclórico (barra cheia) &nbsp;·&nbsp; combo: <kbd>J</kbd> <kbd>J</kbd> <kbd>K</kbd> &nbsp;·&nbsp; controle físico também funciona
   </div>
-  <div class="hint">Arraste o lado esquerdo da tela para mover · botões à direita para atacar · combo: LEVE, LEVE, PESADO</div>
+  <div class="hint">Arraste o lado esquerdo da tela para mover · botão grande = ataque leve · ao lado = pesado e defesa · aro colorido = poderes · combo: leve, leve, pesado</div>
 </div>
 <div class="screen" id="over"><h1 id="overT"></h1><div class="sub" id="overS"></div><button class="btn" id="again">REVANCHE</button><button class="btn ghost" id="tomenu">TROCAR LUTADOR</button></div>
 <div class="screen" id="pause"><h1>PAUSA</h1><button class="btn" id="resume">CONTINUAR</button>
   <div class="q"><span>GRÁFICOS</span><button data-q="auto">AUTO</button><button data-q="low">BAIXO</button><button data-q="medium">MÉDIO</button><button data-q="high">ALTO</button></div>
+  <div class="q cs"><span>CONTROLES</span><button data-cs="0.85">P</button><button data-cs="1">M</button><button data-cs="1.15">G</button></div>
   <button class="btn ghost" id="quit">SAIR PARA O MENU</button></div>
 <div class="screen" id="rotate"><div class="ph"></div><div class="sub" style="margin:0">GIRE O APARELHO PARA JOGAR</div></div>
 <div class="screen" id="boot"><h1>FOLCLORE <span>SOMBRIO</span></h1><div class="sub">CARREGANDO</div></div>
