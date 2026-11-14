@@ -25,6 +25,9 @@
   body { position:fixed; inset:0; }
   canvas { position:fixed; inset:0; width:100%; height:100%; display:block; }
   #vig { position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.6) 100%); }
+  canvas { transition:filter .25s; } body.dazed canvas { filter:blur(1.4px) hue-rotate(55deg) saturate(1.5); }
+  body.dazed #vig { background:radial-gradient(ellipse at center, transparent 35%, rgba(70,10,110,.7) 100%); }
+  body.night #vig { background:radial-gradient(ellipse at center, rgba(30,0,60,.25) 20%, rgba(16,0,36,.92) 100%); }
   #flash { position:fixed; inset:0; pointer-events:none; background:#fff; opacity:0; transition:opacity .35s; }
   #bars { position:fixed; inset:0; pointer-events:none; }
   #bars::before, #bars::after { content:''; position:absolute; left:0; right:0; height:0; background:#000; transition:height .3s; }
@@ -129,10 +132,11 @@
   h1 span { color:var(--blood); }
   .sub { letter-spacing:.5em; font-size:12px; color:#c9a36a; margin:8px 0 30px; }
   .cards { display:flex; gap:22px; flex-wrap:wrap; justify-content:center; }
-  .card { width:270px; padding:20px 20px 16px; cursor:pointer; background:rgba(20,10,8,.85); border:1px solid #5a3b28; color:var(--bone); font-family:inherit; text-align:left; transition:transform .15s, border-color .15s, box-shadow .15s; }
+  .card { width:236px; padding:16px 16px 14px; cursor:pointer; background:rgba(20,10,8,.85); border:1px solid #5a3b28; color:var(--bone); font-family:inherit; text-align:left; transition:transform .15s, border-color .15s, box-shadow .15s; }
   .card:hover, .card:focus { transform:translateY(-5px); border-color:var(--ember); box-shadow:0 0 34px rgba(255,110,30,.35); outline:none; }
-  .card h2 { margin:0 0 2px; font-size:23px; letter-spacing:.1em; }
-  .card em { font-style:normal; font-size:11px; letter-spacing:.14em; color:#c9a36a; }
+  .card h2 { margin:0 0 2px; font-size:19px; letter-spacing:.08em; }
+  .card .ch { display:flex; align-items:center; gap:10px; min-height:52px; } .card .pt { width:50px; height:50px; flex:none; border:1px solid #5a3b28; background:#120a08; }
+  .card em { font-style:normal; font-size:9.5px; letter-spacing:.1em; color:#c9a36a; }
   .card dl { margin:14px 0 0; display:grid; grid-template-columns:auto 1fr; gap:5px 10px; font-size:11px; letter-spacing:.08em; align-items:center; font-family:Georgia,serif; }
   .card dd { margin:0; height:6px; background:#2a1a14; } .card dd i { display:block; height:100%; background:linear-gradient(90deg,#8a1a10,#ff7a1f); }
   .keys { margin-top:24px; font-family:Georgia,serif; font-size:13px; line-height:1.9; color:#cdbfa3; max-width:780px; }
@@ -167,12 +171,13 @@
     .mid { width:54px; } #timer { font-size:26px; padding-top:4px; } #pauseBtn { width:40px; height:28px; margin-top:3px; }
     #combo { top:30vh; } #diag { top:calc(50px + var(--st)); font-size:9.5px; padding:4px 7px; line-height:1.35; } #moves { font-size:10.5px; }
     .sub { letter-spacing:.3em; font-size:10px; margin:5px 0 14px; }
-    .cards { gap:12px; flex-wrap:nowrap; } .card { width:min(42vw,260px); padding:12px 14px; } .card h2 { font-size:17px; } .card em { font-size:9px; } .card dl { display:none; }
+    .cards { gap:8px; flex-wrap:nowrap; } .card { width:min(23.5vw,200px); padding:8px 9px; } .card h2 { font-size:12.5px; letter-spacing:.04em; } .card em { font-size:7.5px; letter-spacing:.04em; } .card dl { display:none; } .card .ch { gap:7px; min-height:40px; } .card .pt { width:36px; height:36px; }
+    .qrow { column-gap:14px; }
     .btn { margin-top:14px; padding:10px 26px; font-size:13px; } .btn.ghost { margin-top:8px; }
     .q { margin-top:12px; } .q button { padding:8px 10px; } .hint { margin-top:10px; font-size:11px; }
   }
 </style>
-  <script type="module" crossorigin src="./assets/index-BYjlgIgr.js"></script>
+  <script type="module" crossorigin src="./assets/index-DmKT_fuL.js"></script>
 </head>
 <body>
 <div id="vig"></div><div id="bars"></div>
@@ -206,14 +211,18 @@
 <div id="flash"></div>
 <div class="screen" id="menu">
   <h1>FOLCLORE <span>SOMBRIO</span></h1>
-  <div class="sub">PROTÓTIPO DE COMBATE · V0.4 · ESCOLHA SEU LUTADOR</div>
+  <div class="sub">PROTÓTIPO DE COMBATE · V0.5 · ESCOLHA SEU LUTADOR</div>
   <div class="cards">
-    <button class="card" data-k="saci"><h2>SACI</h2><em>VELOCIDADE · EVASÃO · CONTROLE</em>
+    <button class="card" data-k="saci"><div class="ch"><svg class="pt" viewBox="0 0 48 48"><circle cx="24" cy="29" r="13" fill="#3a2418"/><path d="M9 24c1-13 8-20 22-22-3 5-2 9 2 12 4 3 6 6 6 10z" fill="#c21d12"/><circle cx="19" cy="30" r="2" fill="#ffd27a"/><circle cx="29" cy="30" r="2" fill="#ffd27a"/><path d="M19 37q5 4 10 0" stroke="#e6d9bd" stroke-width="2" fill="none"/></svg><div><h2>SACI</h2><em>VELOCIDADE · EVASÃO · CONTROLE</em></div></div>
       <dl><dt>Força</dt><dd><i style="width:60%"></i></dd><dt>Velocidade</dt><dd><i style="width:100%"></i></dd><dt>Resistência</dt><dd><i style="width:50%"></i></dd><dt>Alcance</dt><dd><i style="width:70%"></i></dd><dt>Mobilidade</dt><dd><i style="width:100%"></i></dd></dl></button>
-    <button class="card" data-k="mula"><h2>MULA SEM CABEÇA</h2><em>FORÇA · RESISTÊNCIA · PRESSÃO</em>
+    <button class="card" data-k="mula"><div class="ch"><svg class="pt" viewBox="0 0 48 48"><path d="M12 46V30c0-6 5-10 12-10s12 4 12 10v16z" fill="#2a1a16"/><path d="M25 2c1 7 10 10 10 19a11 11 0 0 1-22 0c0-5 3-7 5-10 0 3 1 5 3 5 2-4-1-9 4-14z" fill="#ff7a1f"/><path d="M24 14c2 3 5 5 5 9a5 5 0 0 1-10 0c0-2 1-4 2-5 1 1 2 1 3-4z" fill="#ffd27a"/></svg><div><h2>MULA SEM CABEÇA</h2><em>FORÇA · RESISTÊNCIA · PRESSÃO</em></div></div>
       <dl><dt>Força</dt><dd><i style="width:90%"></i></dd><dt>Velocidade</dt><dd><i style="width:50%"></i></dd><dt>Resistência</dt><dd><i style="width:90%"></i></dd><dt>Alcance</dt><dd><i style="width:70%"></i></dd><dt>Mobilidade</dt><dd><i style="width:40%"></i></dd></dl></button>
+    <button class="card" data-k="curupira"><div class="ch"><svg class="pt" viewBox="0 0 48 48"><path d="M6 24l3-14 5 7 2-13 6 10 4-12 4 12 6-9 1 13 6-6-3 14z" fill="#e2491a"/><path d="M14 22l3-9 4 6 3-9 4 9 4-6 3 9z" fill="#ffa22e"/><circle cx="24" cy="30" r="12" fill="#94603a"/><circle cx="19" cy="29" r="2" fill="#9dff5a"/><circle cx="29" cy="29" r="2" fill="#9dff5a"/><path d="M12 42c6-5 18-5 24 0l-4 5H16z" fill="#3f7a2c"/><path d="M20 36h8" stroke="#2a160c" stroke-width="2"/></svg><div><h2>CURUPIRA</h2><em>AGILIDADE · ARMADILHA · TERRITÓRIO</em></div></div>
+      <dl><dt>Força</dt><dd><i style="width:70%"></i></dd><dt>Velocidade</dt><dd><i style="width:90%"></i></dd><dt>Resistência</dt><dd><i style="width:60%"></i></dd><dt>Alcance</dt><dd><i style="width:80%"></i></dd><dt>Mobilidade</dt><dd><i style="width:90%"></i></dd></dl></button>
+    <button class="card" data-k="cuca"><div class="ch"><svg class="pt" viewBox="0 0 48 48"><path d="M8 46c-3-16 0-30 10-36h12c10 6 13 20 10 36z" fill="#eeeadf"/><path d="M13 20c0-7 5-11 11-11s11 4 11 11l-3 20c-1 4-4 6-8 6s-7-2-8-6z" fill="#2a8478"/><path d="M17 34h14l-1 8c-1 3-3 4-6 4s-5-1-6-4z" fill="#a9cf9a"/><circle cx="18" cy="19" r="3.2" fill="#ffd23a"/><circle cx="30" cy="19" r="3.2" fill="#ffd23a"/><path d="M18 17v4M30 17v4" stroke="#120a04" stroke-width="1.5"/><path d="M17 34l2 3 2-3 2 3 2-3 2 3 2-3 2 3" stroke="#f2ecd8" stroke-width="1.5" fill="none"/><path d="M13 12h22" stroke="#caa23c" stroke-width="2.5"/></svg><div><h2>CUCA</h2><em>MAGIA · LONGO ALCANCE · AGARRÕES</em></div></div>
+      <dl><dt>Força</dt><dd><i style="width:70%"></i></dd><dt>Velocidade</dt><dd><i style="width:40%"></i></dd><dt>Resistência</dt><dd><i style="width:70%"></i></dd><dt>Alcance</dt><dd><i style="width:90%"></i></dd><dt>Mobilidade</dt><dd><i style="width:50%"></i></dd></dl></button>
   </div>
-  <div class="qrow"><div class="q"><span>MODO</span><button data-mode="luta">LUTA</button><button data-mode="treino">TREINO</button></div><div class="q"><span>GRÁFICOS</span><button data-q="auto">AUTO</button><button data-q="low">BAIXO</button><button data-q="medium">MÉDIO</button><button data-q="high">ALTO</button></div></div>
+  <div class="qrow"><div class="q"><span>MODO</span><button data-mode="luta">LUTA</button><button data-mode="treino">TREINO</button></div><div class="q"><span>ADVERSÁRIO</span><button id="oppBtn">ALEATÓRIO</button></div><div class="q"><span>GRÁFICOS</span><button data-q="auto">AUTO</button><button data-q="low">BAIXO</button><button data-q="medium">MÉDIO</button><button data-q="high">ALTO</button></div></div>
   <div class="q cs"><span>CONTROLES</span><button data-cs="0.85">P</button><button data-cs="1">M</button><button data-cs="1.15">G</button></div>
   <div class="keys">
     <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover em 3D (W/S = profundidade) &nbsp;·&nbsp; <kbd>Shift</kbd> bloquear &nbsp;·&nbsp; <kbd>Esc</kbd> pausar<br>
