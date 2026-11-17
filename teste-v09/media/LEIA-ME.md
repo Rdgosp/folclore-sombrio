@@ -17,7 +17,7 @@ Nada disso mexe nos modelos 3D de combate.
 | `bg/vs` | fundo das duas metades da tela VS | paisagem |
 | `bg/results` | fundo da tela de vitória/derrota | paisagem |
 
-`<lutador>` = `saci`, `mula`, `curupira` ou `cuca`.
+`<lutador>` = `saci`, `mula`, `curupira`, `cuca`, `iara` ou `boto`.
 
 ## Áudio
 
