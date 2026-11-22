@@ -1,0 +1,24 @@
+{
+ "personagem": "Mapinguari",
+ "solda": 0.0001,
+ "repesar": false,
+ "apagar_acoes": true,
+ "manter": [],
+ "ossos": [
+  {"nome": "Pelo", "pai": "Spine2",
+   "pontos": [[0, 0.22, 1.42], [0, 0.30, 1.15], [0, 0.33, 0.88], [0, 0.31, 0.58]],
+   "peso_raiz": 0.05,
+   "regiao": [{"caixa": [[-0.34, 0.14, 0.5], [0.34, 0.6, 1.5]],
+     "excluir_pesos": {"LeftArm": 0.2, "RightArm": 0.2, "LeftForeArm": 0.05, "RightForeArm": 0.05, "LeftUpLeg": 0.35, "RightUpLeg": 0.35, "LeftLeg": 0.05, "RightLeg": 0.05}}]},
+  {"nome": "Colar", "pai": "Hips",
+   "pontos": [[0, -0.2, 0.86], [0, -0.22, 0.6], [0, -0.2, 0.3]],
+   "peso_raiz": 0.1,
+   "regiao": [{"caixa": [[-0.09, -0.4, 0.28], [0.09, -0.05, 0.84]],
+     "excluir_pesos": {"LeftLeg": 0.3, "RightLeg": 0.3, "LeftHand": 0.05, "RightHand": 0.05}}]}
+ ],
+ "sem_deform": [],
+ "corrigir_lados": 0.04,
+ "suavizar": 2,
+ "tetos": {"LeftUpLeg": ["Hips", 0.03, 0.08], "RightUpLeg": ["Hips", 0.03, 0.08]},
+ "lados_z": [0.45, 1.85]
+}
