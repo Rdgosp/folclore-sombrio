@@ -1,0 +1,18 @@
+{
+ "personagem": "BotoHibrido", "solda": 0.0001, "repesar": false, "apagar_acoes": true, "manter": [],
+ "ossos": [
+  {"nome": "Chapeu", "pai": "Head", "rigido": true, "pontos": [[0, -0.02, 1.6], [0, -0.02, 1.76]],
+   "regiao": [{"caixa": [[-0.3, -0.3, 1.645], [0.3, 0.3, 1.9]], "lum_min": 0.22},
+              {"caixa": [[-0.3, -0.3, 1.57], [0.3, 0.3, 1.645]], "lum_min": 0.25, "raio_min": [0, -0.01, 0.125]}]},
+  {"nome": "Faixa", "pai": "Hips", "pontos": [[0.12, -0.12, 0.98], [0.19, -0.13, 0.74], [0.23, -0.12, 0.52], [0.26, -0.1, 0.36]],
+   "peso_raiz": 0.15,
+   "regiao": [{"caixa": [[0.04, -0.3, 0.33], [0.34, 0.0, 0.93]], "sat_min": 0.35,
+     "longe_de": [[0.42, -0.04, 0.97], [0.44, -0.06, 0.72], 0.09]}]},
+  {"nome": "Cabelo", "pai": "Head", "pontos": [[0, 0.1, 1.53], [0, 0.16, 1.38], [0, 0.18, 1.22]],
+   "peso_raiz": 0.1,
+   "regiao": [{"caixa": [[-0.3, 0.06, 1.18], [0.3, 0.35, 1.53]], "lum_max": 0.3, "sat_max": 0.6}]}
+ ],
+ "sem_deform": [], "corrigir_lados": 0.04, "suavizar": 2,
+ "tetos": {"LeftUpLeg": ["Hips", 0.03, 0.08], "RightUpLeg": ["Hips", 0.03, 0.08]},
+ "lados_z": [0.6, 1.7]
+}
