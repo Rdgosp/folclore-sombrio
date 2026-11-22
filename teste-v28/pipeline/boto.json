@@ -1,0 +1,210 @@
+{
+ "personagem": "Boto",
+ "solda": 0.0001,
+ "repesar": false,
+ "apagar_acoes": true,
+ "manter": [
+  "Root"
+ ],
+ "ossos": [
+  {
+   "nome": "Chapeu",
+   "pai": "Head",
+   "rigido": true,
+   "pontos": [
+    [
+     0,
+     0.02,
+     1.6
+    ],
+    [
+     0,
+     0.02,
+     1.76
+    ]
+   ],
+   "regiao": [
+    {
+     "caixa": [
+      [
+       -0.3,
+       -0.3,
+       1.605
+      ],
+      [
+       0.3,
+       0.3,
+       1.9
+      ]
+     ],
+     "lum_min": 0.25,
+     "excluir_pesos": {
+      "LeftHand": 0.05,
+      "LeftForeArm": 0.2,
+      "RightHand": 0.05,
+      "RightForeArm": 0.2
+     }
+    },
+    {
+     "caixa": [
+      [
+       -0.3,
+       -0.3,
+       1.53
+      ],
+      [
+       0.3,
+       0.3,
+       1.605
+      ]
+     ],
+     "lum_min": 0.3,
+     "raio_min": [
+      0,
+      0.02,
+      0.105
+     ],
+     "excluir_pesos": {
+      "LeftHand": 0.05,
+      "LeftForeArm": 0.2,
+      "RightHand": 0.05,
+      "RightForeArm": 0.2
+     }
+    }
+   ]
+  },
+  {
+   "nome": "Faixa",
+   "pai": "Hips",
+   "pontos": [
+    [
+     0.2,
+     -0.04,
+     0.95
+    ],
+    [
+     0.2,
+     -0.05,
+     0.75
+    ],
+    [
+     0.17,
+     -0.03,
+     0.52
+    ],
+    [
+     0.15,
+     0.0,
+     0.18
+    ]
+   ],
+   "peso_raiz": 0.15,
+   "regiao": [
+    {
+     "caixa": [
+      [
+       0.06,
+       -0.2,
+       0.17
+      ],
+      [
+       0.32,
+       0.2,
+       0.9
+      ]
+     ],
+     "lum_min": 0.36,
+     "lum_max": 0.58,
+     "sat_min": 0.28,
+     "sat_max": 0.56,
+     "longe_de": [
+      [
+       0.242,
+       0.096,
+       0.905
+      ],
+      [
+       0.29,
+       0.05,
+       0.72
+      ],
+      0.075
+     ],
+     "excluir_pesos": {
+      "LeftHand": 0.05,
+      "LeftForeArm": 0.2,
+      "RightHand": 0.05,
+      "RightForeArm": 0.2
+     }
+    }
+   ]
+  },
+  {
+   "nome": "Cabelo",
+   "pai": "Head",
+   "pontos": [
+    [
+     0,
+     0.11,
+     1.52
+    ],
+    [
+     0,
+     0.15,
+     1.38
+    ],
+    [
+     0,
+     0.17,
+     1.2
+    ]
+   ],
+   "peso_raiz": 0.1,
+   "regiao": [
+    {
+     "caixa": [
+      [
+       -0.16,
+       0.1,
+       1.15
+      ],
+      [
+       0.16,
+       0.3,
+       1.52
+      ]
+     ],
+     "lum_max": 0.2,
+     "excluir_pesos": {
+      "LeftHand": 0.05,
+      "LeftForeArm": 0.2,
+      "RightHand": 0.05,
+      "RightForeArm": 0.2
+     }
+    }
+   ]
+  }
+ ],
+ "sem_deform": [
+  "Root",
+  "HeadTop_End"
+ ],
+ "corrigir_lados": 0.04,
+ "suavizar": 2,
+ "tetos": {
+  "LeftUpLeg": [
+   "Hips",
+   0.03,
+   0.08
+  ],
+  "RightUpLeg": [
+   "Hips",
+   0.03,
+   0.08
+  ]
+ },
+ "lados_z": [
+  0.7,
+  1.7
+ ]
+}
